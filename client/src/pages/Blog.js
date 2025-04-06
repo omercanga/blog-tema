@@ -3,17 +3,14 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
   Container,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
   Typography,
   Box,
-  Chip,
   Button,
   CircularProgress,
   Alert,
-  Breadcrumbs
+  Breadcrumbs,
+  Paper,
+  Chip
 } from '@mui/material';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
@@ -89,65 +86,83 @@ const Blog = () => {
           </Button>
         </Box>
       ) : (
-        <Grid container spacing={4}>
+        <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
           {posts.map((post) => (
-            <Grid item xs={12} sm={6} md={4} key={post._id}>
-              <Card 
-                sx={{ 
-                  height: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  transition: 'transform 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 3
-                  }
-                }}
-              >
-                {post.featuredImage && (
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={post.featuredImage}
-                    alt={post.title}
-                  />
-                )}
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {post.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Paper
+              key={post._id}
+              elevation={0}
+              sx={{
+                p: 4,
+                mb: 4,
+                borderRadius: 2,
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 3
+                }
+              }}
+            >
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Typography variant="h4" component="h2" gutterBottom>
+                  {post.title}
+                </Typography>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, color: 'text.secondary' }}>
+                  <Typography variant="body2">
                     {post.publishedAt && format(new Date(post.publishedAt), 'd MMMM yyyy', { locale: tr })}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {post.excerpt}
-                  </Typography>
-                  {post.tags && post.tags.length > 0 && (
-                    <Box sx={{ mb: 2 }}>
-                      {post.tags.map((tag) => (
-                        <Chip
-                          key={tag}
-                          label={tag}
-                          size="small"
-                          sx={{ mr: 1, mb: 1 }}
-                        />
-                      ))}
-                    </Box>
+                  {post.author && (
+                    <>
+                      <Typography variant="body2">•</Typography>
+                      <Typography variant="body2">{post.author.name}</Typography>
+                    </>
                   )}
-                  <Button
-                    component={Link}
-                    to={`/blog/${post.slug}`}
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                  >
-                    Devamını Oku
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
+                </Box>
+
+                {post.featuredImage && (
+                  <Box
+                    component="img"
+                    src={post.featuredImage}
+                    alt={post.title}
+                    sx={{
+                      width: '100%',
+                      height: '300px',
+                      objectFit: 'cover',
+                      borderRadius: 1
+                    }}
+                  />
+                )}
+
+                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.8 }}>
+                  {post.excerpt}
+                </Typography>
+
+                {post.tags && post.tags.length > 0 && (
+                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    {post.tags.map((tag) => (
+                      <Chip
+                        key={tag}
+                        label={tag}
+                        size="small"
+                        sx={{ backgroundColor: 'rgba(25, 118, 210, 0.1)' }}
+                      />
+                    ))}
+                  </Box>
+                )}
+
+                <Button
+                  component={Link}
+                  to={`/blog/${post.slug}`}
+                  variant="text"
+                  color="primary"
+                  sx={{ alignSelf: 'flex-start', mt: 1 }}
+                >
+                  Devamını Oku →
+                </Button>
+              </Box>
+            </Paper>
           ))}
-        </Grid>
+        </Box>
       )}
     </Container>
   );
